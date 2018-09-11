@@ -1,0 +1,73 @@
+{
+  resource-types: {
+    lb: {
+      stats,
+      alerts
+    },
+    web-api-cluster: {
+      stats: [
+        {
+          key: 'latency_per_req',
+          source: 'someurl',
+          thresholds: [
+            { severity: 'warning', value: 500 },
+            { severity: 'critical', value: 1000 }
+          ]
+        }
+      ]
+    },
+    rdbms: {
+      stats: [
+        {
+          key: 'latency_per_read',
+          source: '',
+          thresholds: [
+            { severity: 'warning', value: 500 },
+            { severity: 'critical', value: 1000 }
+          ]
+        },
+        {
+          key: 'latency_per_write',
+          source: '',
+          thresholds: [
+            { severity: 'warning', value: 500 },
+            { severity: 'critical', value: 1000 }
+          ]
+        }
+      ]
+    }
+  },
+  
+  resources: [
+    {
+      name: 'account-lb'
+      type: 'lb'
+    },
+    {
+      name: 'account-cluster',
+      type: 'web-api-cluster'
+    },
+    {
+      name: 'account-container',
+      type: 'web-api-instance',
+      parent: 'account-cluster',
+      multi: true,
+      show: false
+    },
+    {
+      name: 'ninja-queue',
+      type: 'queue'
+    },
+  ],
+  
+  monitoring: {
+    severities: {
+      warning: {
+        color: 'orange'
+      },
+      critical: {
+        color: 'red'
+      }
+    }
+  }
+}
