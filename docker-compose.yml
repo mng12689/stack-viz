@@ -1,0 +1,14 @@
+version: "2"
+services:
+  streamer:
+    build:
+      context: ./streamer
+    environment:
+      - DEST_HOST=connection_handler
+
+  connection_handler:
+    build:
+      context: ./connection_handler
+    ports:
+      - 8000:8000
+

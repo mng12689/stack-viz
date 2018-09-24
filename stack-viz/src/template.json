@@ -1,0 +1,161 @@
+{
+  "resourceTypes": {
+    "lb": {
+      "stats": {
+        "latency_per_req": {
+          "source": "someurl",
+          "thresholds": {
+            "warning": { "value": 500 },
+            "critical": { "value": 1000 }
+          }
+        }
+      }
+    },
+    "web-client": {
+      "stats": {
+        "loglevel": {
+          "source": "someurl",
+          "thresholds": {
+            "warning": { "value": 500 },
+            "critical": { "value": 1000 }
+          }
+        }
+      }
+    },
+    "svc-cluster": {
+      "stats": {
+        "latency_per_req": {
+          "source": "someurl",
+          "thresholds": {
+            "warning": { "value": 500 },
+            "critical": { "value": 1000 }
+          }
+        }
+      }
+    },
+    "svc-instance": {
+      "stats": {
+        "latency_per_req": {
+          "source": "someurl",
+          "thresholds": {
+            "warning": { "value": 500 },
+            "critical": { "value": 1000 }
+          }
+        }
+      }
+    },
+    "rdbms": {
+      "stats": {
+        "latency_per_read": {
+          "source": "",
+          "thresholds": {
+            "warning": { "value": 500 },
+            "critical": { "value": 1000 }
+          }
+        },
+        "latency_per_write": {
+          "source": "",
+          "thresholds": {
+            "warning": { "value": 500 },
+            "critical": { "value": 1000 }
+          }
+        }
+      }
+    },
+    "queue": {
+      "stats": {
+        "queue_items": {
+          "source": "",
+          "thresholds": {
+            "warning": { "value": 500 },
+            "critical": { "value": 1000 }
+          }
+        }
+      }
+    }
+  },
+  
+  "resources": {
+    "admin-web-client": {
+      "type": "web-client",
+      "egress": [ "admin-lb" ]
+    },
+    "admin-lb": {
+      "type": "lb",
+      "egress": [ "admin-web-instance" ]
+    },
+    "admin-web-cluster": {
+      "type": "svc-cluster"
+    },
+    "admin-web-instance": {
+      "type": "svc-instance",
+      "multi": true,
+      "egress": [ "account-instance" ],
+      "parent": "admin-web-cluster"
+    },
+    "account-cluster": {
+      "type": "svc-cluster"
+    },
+    "account-instance": {
+      "type": "svc-instance",
+      "multi": true,
+      "show": false,
+      "egress": [ "account-rdbms" ],
+      "parent": "account-cluster"
+    },
+    "auth-cluster": {
+      "type": "svc-cluster"
+    },
+    "auth-instance": {
+      "type": "svc-instance",
+      "multi": true,
+      "show": false,
+      "egress": [ "auth-rdbms" ],
+      "parent": "auth-cluster"
+    },
+    "sponsor-cluster": {
+      "type": "svc-cluster"
+    },
+    "sponsor-instance": {
+      "type": "svc-instance",
+      "multi": true,
+      "show": false,
+      "egress": [ "sponsor-rdbms" ],
+      "parent": "sponsor-cluster"
+    },
+    "account-rdbms": {
+      "type": "rdbms"
+    },
+    "auth-rdbms": {
+      "type": "rdbms"
+    },
+    "sponsor-rdbms": {
+      "type": "rdbms"
+    },
+    "ninja-queue": {
+      "type": "queue"
+    }
+  },
+  
+  "monitoring": {
+    "severities": [
+      {
+        "name": "warning"
+      },
+      {
+        "name": "critical"
+      }
+    ]
+  },
+
+  "display": {
+    "severities": {
+      "warning": {
+        "color": "orange"
+      },
+      "critical": {
+        "color": "red"
+      }
+    }
+  }
+}
