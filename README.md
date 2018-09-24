@@ -6,7 +6,7 @@
 The stack consists of 2 parts:
 
 ### Stream proxy
-The stream proxy is a simple connection proxy that accepts network connections (currently only UDP supported) from an external streaming source (eg. Logstash) and proxies them to connected browsers over a Websocket connection. Stream proxy supports multiple clients by accepting incoming data and broadcasting it to all connected clients over their own websocket connections.
+The stream proxy is a simple connection proxy that listens for network traffic (currently only UDP supported) from an external streaming source (eg. Logstash) and proxies the traffic to connected browsers over a Websocket connection. Stream proxy supports multiple clients by accepting incoming data and broadcasting it to all connected clients over their own websocket connections.
 
 The stream proxy expects a small payload like the following:
 
@@ -29,15 +29,37 @@ This project obviously relies on some external source to stream correctly format
 // TODO: for now look at ./stack-viz/src/template.json to get an idea of how to configure
 ```
 {
-  resources: {
+  "resources": {
     "$rName": {
       "type": "$type",
       "egress": [ "$rName2", "$rName3" ]
     }
   },
-  resourceTypes: {
+  "resourceTypes": {
     "$rType": {
-      
+      "stats": {
+        "$key": {
+          "thresholds": {
+            "$s1": { "value": 500 }
+            "$s2": { "value": 1000 }
+          }
+        }
+      }
+    }
+  },
+  "global": {
+    "severities": [
+      { "name": "$s1" }
+      { "name": "$s2" }
+    ]
+  }.
+  "display" {
+    "severities": {
+      "$s1": { "color": "$color1" },
+      "$s2": { "color": "$color2" }
+    },
+    "resources": {
+      "$rName": { ... }
     }
   }
 }               
