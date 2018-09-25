@@ -137,25 +137,20 @@
     }
   },
   
-  "monitoring": {
+  "global": {
     "severities": [
       {
-        "name": "warning"
+        "name": "warning",
+        "display": {
+          "color": "orange"
+        }
       },
       {
-        "name": "critical"
+        "name": "critical",
+        "display": {
+          "color": "red"
+        }
       }
     ]
-  },
-
-  "display": {
-    "severities": {
-      "warning": {
-        "color": "orange"
-      },
-      "critical": {
-        "color": "red"
-      }
-    }
   }
 }

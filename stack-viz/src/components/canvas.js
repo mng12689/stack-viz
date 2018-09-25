@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { fromJS, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { websocket } from '../actions';
-import appConfig from '../config';
+import { resources, global } from '../config';
 
 const resourceGraph = [
   [ 'admin-web-client' ],
@@ -133,14 +133,14 @@ class Canvas extends Component {
   renderResource = (r) => {
     // look up most recent stat to determine color
     const resource = this.getResource(r);
-    const displayAttributes = this.getDisplayAttributes(resource);
+    const displayAttributes = this.getDisplayAttributes(r);
     const color = displayAttributes.get('color');
     return (
       <div style={{ ...styles.resource, ...{ backgroundColor: color } }}
            key={r}
            onClick={this.onResourceClick.bind(this, r)}>
-        {resource.type.get('image')
-         ? ( <img src={resource.type.image.src} style={styles.resourceImage} /> )
+        {resource.get('image')
+         ? ( <img src={resource.getIn([ 'image', 'src' ])} style={styles.resourceImage} /> )
          : null}
         <p>{r}</p>
       </div>
@@ -155,9 +155,9 @@ class Canvas extends Component {
   
   renderResourceDetail = (r) => {
     const resource = this.getResource(r);
-    const severity = resource.getSeverity();
-    const metrics = resource.metrics.toList();
-    const displayAttributes = this.getDisplayAttributes(resource);
+    const severity = this.getSeverity(r) || 'none';
+    const metrics = this.props.resourceData.metricsByResource.get(r).valueSeq();
+    const displayAttributes = this.getDisplayAttributes(r);
     const color = displayAttributes.get('color');
     return (
       <div style={styles.resourceDetail}>
@@ -184,13 +184,23 @@ class Canvas extends Component {
   };
   
   getResource = (r) => {
-    return this.props.resourceData.resources.get(r);
+    return resources.get(r);
   };
 
-  getDisplayAttributes = (resource) => {
+  getSeverity = (r) => {
+    // TODO: inefficient, find better algo
+    const metrics = this.props.resourceData.metricsByResource.get(r);
+    if ( metrics.size > 0 ) {
+      const topMetric = metrics.maxBy((m) => m.value);
+      return topMetric.getSeverity();
+    }
+  };
+  
+  getDisplayAttributes = (resourceName) => {
     const defaultAttributes = Map({ color: 'rgba(255,255,255,0.5)' });
-    const displayAttributes = resource.getSeverity()
-          ? appConfig.getIn(['display', 'severities', resource.getSeverity() ])
+    const severity = this.getSeverity(resourceName);
+    const displayAttributes = severity 
+          ? global.getIn(['severities', severity, 'display' ])
           : Map();
     return defaultAttributes.merge(displayAttributes);
   };

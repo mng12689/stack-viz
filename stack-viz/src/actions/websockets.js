@@ -48,9 +48,13 @@ export function connect() {
       let metric;
       try {
         const parsed = JSON.parse(msg);
-        const rType = appConfig.getIn([ 'resources', parsed.rName, 'type' ]);
-        const metricDef = appConfig.getIn([ 'resourceTypes', rType, 'stats', parsed.key ]);
-        metric = new Metric(parsed, metricDef);
+        metric = new Metric({
+            ...parsed,
+            ...{
+              resourceName: parsed.rName,
+              resourceId: parsed.rId
+            }
+        });
         dispatch(wsMessageReceived(metric));
       } catch(e) {
         console.error(`Unparseable metric, throwing away: ${msg}`);

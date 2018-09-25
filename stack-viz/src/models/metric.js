@@ -1,5 +1,5 @@
 import { Record, Map } from 'immutable';
-import appConfig from '../config';
+import { global, resources } from '../config';
 
 class Metric extends Record({
   key: null,
@@ -9,18 +9,13 @@ class Metric extends Record({
   ts: null,
   receivedAt: null,
   meta: null,
-  thresholds: Map()
+  severity: null
 }) {
-  
-  constructor(obj, def) {
+  constructor(obj) {
+    // TODO: is it a bad idea to calc severity on each instantiation?
     super({
-      key: obj.key,
-      value: obj.value,
-      resourceName: obj.rName,
-      resourceId: obj.rId,
-      ts: obj.ts,
-      meta: obj.meta,
-      thresholds: def.get('thresholds')
+        ...obj,
+        ...{ severity: Metric.getSeverity(obj.rName, obj.key, obj.value) }
     });
   }
 }
@@ -28,11 +23,17 @@ class Metric extends Record({
 Metric.prototype.getSeverity = function() {
   // TODO: more efficient way to find severity, hash fn prob best
   const _this = this;
-  const severity = appConfig.getIn([ 'monitoring', 'severities' ])
+  return Metric.getSeverity(_this.resourceName, _this.key, _this.value);
+};
+
+Metric.getSeverity = function(rName, key, value) {
+  // TODO: more efficient way to find severity, hash fn prob best
+  const severity = global.get( 'orderedSeverities' )
     .findLast((sDef) => {
       const s = sDef.get('name');
-      return this.thresholds.get(s) &&
-        _this.value > _this.thresholds.get(s).get('value');
+      const severityThreshold = resources.getIn([ rName, 'stats', key, 'thresholds', s ]);
+      return severityThreshold &&
+        value > severityThreshold.get('value');
     });
   return severity && severity.get('name');
 };
