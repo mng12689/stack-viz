@@ -26,7 +26,7 @@ The stack visualizer is the browser client that renders the actual visualization
 This project obviously relies on some external source to stream correctly formatted messages to the stream proxy. In production, this will likely be a log/metrics parser like Logstash, but for debugging purposes this project comes with a streamer which waits for input from STDIN and sends that input to the stream proxy.
 
 #### Configuration
-// TODO: for now look at ./stack-viz/src/template.json to get an idea of how to configure
+// TODO: for now look at ./stack-viz/src/config/default.json to get an idea of how to configure, eventually default.json should only contain default configuration, and user-supplied configuration should be placed in /etc/stack-viz.d/
 ```
 {
   "resources": {
@@ -49,29 +49,20 @@ This project obviously relies on some external source to stream correctly format
   },
   "global": {
     "severities": [
-      { "name": "$s1" }
-      { "name": "$s2" }
+      { "name": "$s1", { display: "color": "$color1" } },
+      { "name": "$s2", { display: "color": "$color1" } }
     ]
-  }.
-  "display" {
-    "severities": {
-      "$s1": { "color": "$color1" },
-      "$s2": { "color": "$color2" }
-    },
-    "resources": {
-      "$rName": { ... }
-    }
   }
 }               
 ```
 
-resources: Defines each individual resource. Each new resource is defined as a key within "resources", and will be rendered exactly once in the stack visualization. It is defined as inheriting from a "type" (defined in "resourceTypes"), which allows multiple resources to inherit the same metrics and display characteristics. Resources may override any properties from their inherited type, or even choose to define all of their properties without specifying a type. // TODO: this isnt exactly true right now, but it should be
+resources: Defines each individual resource. Each new resource is defined as a key within "resources", and will be rendered exactly once in the stack visualization. It is defined as inheriting from a "type" (defined in "resourceTypes"), which allows multiple resources to inherit the same metrics and display characteristics. Resources may override any properties from their inherited type, or even choose to define all of their properties without specifying a type.
 
 resourceTypes: Defines a generic type from which individual resources may inherit characteristics. Currently allows defining metrics and associated thresholds for those metrics.
 
 global: Defines global characteristics. Right now defines ordered severities.
 
-display: Allows display-specific customization of almost any key in the configuration file, including resources and severities.
+$key.display: Allows display-specific customization of almost any key in the configuration file. Every key supports the same display attributes, so simply adding a "display" key to any displayable object should modify its appearance in a consistent manner.
 
 ## Installation
 Note: Docker files exist in these project repos but dont work right now. Hopefully that will change soon.
@@ -85,6 +76,8 @@ Start stack visualizer:
 $> cd ./stack-viz && npm run start
 ```
 Then open localhost:3000 in your browser
+NOTE: If using docker-machine, you may not be able to hit localhost directly. Instead, use the IP address of the docker-machine, or modify /etc/hosts to add a dedicated host for that IP.
+NOTE: If using docker-machine, hot reload is somewhat delayed. It's enabled via the CHOKIDAR_USE_POLLING=true env variable. You may remove this in the docker-compose file if using Docker for Mac.
 
 Start streamer:
 ```

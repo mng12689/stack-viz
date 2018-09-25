@@ -1,14 +1,13 @@
-version: "2"
+version: "3.5"
 services:
-  streamer:
+  stack-viz:
     build:
-      context: ./streamer
-    environment:
-      - DEST_HOST=connection_handler
-
-  connection_handler:
-    build:
-      context: ./connection_handler
+      context: ./stack-viz
+    volumes:
+      - './stack-viz:/app'
+      - '/app/node_modules'
     ports:
-      - 8000:8000
-
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
