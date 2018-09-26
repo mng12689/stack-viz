@@ -69,11 +69,11 @@ Note: Docker files exist in these project repos but dont work right now. Hopeful
 
 Start stream proxy:
 ```
-$> node ./connection_handler/src/server-udp-raw.js
+$> WS_PORT=8080 INGRESS_PORT=8000 node ./stream-proxy/src/server-udp-raw.js
 ```
 Start stack visualizer:
 ```
-$> cd ./stack-viz && npm run start
+$> docker-compose up
 ```
 Then open localhost:3000 in your browser
 NOTE: If using docker-machine, you may not be able to hit localhost directly. Instead, use the IP address of the docker-machine, or modify /etc/hosts to add a dedicated host for that IP.
@@ -87,3 +87,4 @@ Then provide a payload. For now, you can supply the following payload to see the
 ```
 {"key":"latency_per_req","value":505,"rName":"account-cluster"}
 ```
+For a complete list of valid payloads, see src/config/default.json
