@@ -1,3 +1,5 @@
+# TODO: could not get stack-viz js running in browser to establish a websocket connection to the stream proxy
+# when the stream proxy is in its own docker container
 version: "2"
 services:
   stack-viz:
@@ -11,17 +13,20 @@ services:
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
-      - PROXY_HOST=${DOCKER_HOST}
+      - PROXY_HOST=localhost
+#      - PROXY_HOST=docker-host
       - PROXY_PORT=8080
       
-  stream-proxy:
-    build:
-      context: ./stream-proxy
-    volumes:
-      - './stream-proxy/src:/app/src'
-      - '/app/node_modules'
-    ports:
-      - '8000:8000'
-      - '8080:8080'
-    environment:
-      - NODE_ENV=development
+#  stream-proxy:
+#    build:
+#      context: ./stream-proxy
+#    volumes:
+#      - './stream-proxy/src:/app/src'
+#      - '/app/node_modules'
+#    ports:
+#      - '8000:8000/udp'
+#      - '8080:8080'
+#    environment:
+#      - NODE_ENV=development
+#      - WS_PORT=8080
+#      - INGRESS_PORT=8000

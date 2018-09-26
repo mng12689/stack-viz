@@ -2,7 +2,8 @@ import { Record } from 'immutable';
 import { actions } from '../constants';
 
 const initialState = new Record({
-  connectionState: 'disconnected'
+  connectionState: 'disconnected',
+  error: null
 })();
 
 export default function ws_conn(state = initialState, action = null) {
@@ -10,15 +11,22 @@ export default function ws_conn(state = initialState, action = null) {
   switch ( type ) {
     case actions.OPEN_WS_CONN:
       return state.merge({
-        connectionState: 'loading'
+        connectionState: 'loading',
+        error: null
       });
     case actions.WS_CONN_OPENED:
       return state.merge({
-        connectionState: 'open'
+        connectionState: 'open',
+        error: null
       });
     case actions.WS_CONN_CLOSED:
       return state.merge({
         connectionState: 'disconnected'
+      });
+    case actions.WS_CONN_ERROR:
+      return state.merge({
+        connectionState: 'disconnected',
+        error: payload.error
       });
     default:
       return state;

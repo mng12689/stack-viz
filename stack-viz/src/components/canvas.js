@@ -87,11 +87,10 @@ class Canvas extends Component {
   
   render() {
     const connState = this.props.connectionData.get('connectionState');
+    const connErr = this.props.connectionData.get('error');
     return (
       <div style={styles.container}>
-        {connState === 'open'
-         ? this.renderConnectionBanner(connState)
-         : null}
+         {this.renderConnectionBanner(connState, connErr)}
         <div style={styles.canvas}>
           {this.state.selectedResource ? this.renderResourceDetail(this.state.selectedResource) : null}
           {resourceGraph.map((col) => this.renderResourceColumn(col))}
@@ -100,11 +99,14 @@ class Canvas extends Component {
     );
   }
 
-  renderConnectionBanner = (status) => {
-    function configForStatus(status) {
+  renderConnectionBanner = (status, err) => {
+    function configForStatus(status, err) {
       switch(status) {
         case 'disconnected':
-          return { text: 'No connection detected. Retrying in ${??}', bg: 'orange' };
+          if ( !err ) {
+            return { text: 'Connection disconected. Retrying in ${??}', bg: 'orange' };
+          }
+          return { text: `Error opening connection ${JSON.stringify(err)}`, bg: 'red' };
         case 'loading':
           return { text: 'Reconnecting...', bg: 'orange' };
         case 'open':
@@ -114,7 +116,7 @@ class Canvas extends Component {
       }
     }
     
-    const config = configForStatus(status);
+    const config = configForStatus(status, err);
     return (
       <div style={{ ...styles.banner, ...{ backgroundColor: config.bg }}}>
         <p>{config.text}</p>

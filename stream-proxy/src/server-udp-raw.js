@@ -1,8 +1,9 @@
 const dgram = require('dgram');
-const server = dgram.createSocket('udp4');
+
 const WSProxy = require('./ws-proxy');
 const ws = new WSProxy(process.env.WS_PORT);
 
+const server = dgram.createSocket('udp4');
 server.on('error', (err) => {
   console.log(`server error:\n${err.stack}`);
   server.close();
