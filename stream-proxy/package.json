@@ -1,9 +1,10 @@
 {
   "name": "@click-therapeutics-org/connection_handler",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Proxies incoming traffic and broadcasts it to connected clients over a websocket connection",
+  "main": "src/server-udp-raw.js",
   "scripts": {
+    "start": "node src/server-udp-raw.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

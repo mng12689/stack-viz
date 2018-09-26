@@ -1,7 +1,7 @@
 const dgram = require('dgram');
 const server = dgram.createSocket('udp4');
 const WSProxy = require('./ws-proxy');
-const ws = new WSProxy(8080);
+const ws = new WSProxy(process.env.WS_PORT);
 
 server.on('error', (err) => {
   console.log(`server error:\n${err.stack}`);
@@ -23,4 +23,4 @@ server.on('listening', () => {
   console.log(`server listening ${address.address}:${address.port}`);
 });
 
-server.bind(8000);
+server.bind(process.env.INGRESS_PORT);

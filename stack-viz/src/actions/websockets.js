@@ -33,8 +33,11 @@ function wsMessageReceived(msg) {
 }
 
 export function connect() {
+  const PROXY_HOST = process.env.PROXY_HOST;
+  const PROXY_PORT = process.env.PROXY_PORT;
+  const env = process.env;
   // TODO: implement ping/pong to health check server and repoen conn if necessary
-  const socket = new WebSocket("ws://localhost:8080");
+  const socket = new WebSocket(`ws://${PROXY_HOST}:${PROXY_PORT}`);
   socket.binaryType = 'arraybuffer';
   return (dispatch) => {
     dispatch(openingConnection());
