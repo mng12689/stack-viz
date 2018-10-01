@@ -69,12 +69,17 @@ class Stack extends Component {
   render() {
     const connState = this.props.connectionData.get('connectionState');
     const connErr = this.props.connectionData.get('error');
+    // TODO: highly inefficient to calc graph each render
+    const graph = resourceGraph.map((c) => {x
+      return c.map((r) => r.set('display', this.getDisplayAttributes(this.getSeverity(r.getIn([ 'definition', 'name' ])))));
+    });
+               
     return (
       <div style={styles.container}>
          {this.renderConnectionBanner(connState, connErr)}
         <div style={styles.canvas}>
           {this.state.selectedResource ? this.renderResourceDetail(this.state.selectedResource) : null}
-        <Canvas resourceGraph={resourceGraph}
+        <Canvas resourceGraph={graph}
                 onResourceClick={this.onResourceClick} />
         </div>
       </div>
