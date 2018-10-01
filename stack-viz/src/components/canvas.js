@@ -1,21 +1,10 @@
 import React, { Component } from 'react';
 import { fromJS, Map } from 'immutable';
-import { connect } from 'react-redux';
-import { websocket } from '../actions';
-import { resources, global } from '../config';
-
-const resourceGraph = [
-  [ 'admin-web-client' ],
-  [ 'admin-lb'],
-  [ 'admin-web-cluster' ],
-  [ 'account-cluster', 'auth-cluster', 'sponsor-cluster' ],
-  [ 'account-rdbms', 'auth-rdbms', 'sponsor-rdbms' ]
-];
+import ImmutablePropTypes from 'react-immutable-proptypes';
+import PropTypes from 'prop-types';
 
 const styles = {
   canvas: {
-    width: '100%',
-    height: '100%',
     backgroundColor: 'black',
     display: 'flex',
     flex: 1,
@@ -42,176 +31,69 @@ const styles = {
   resourceImage: {
     width: '100%',
     height:'100%'
-  },
-  resourceDetail: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    height: '100%',
-    width: 300,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    padding: 20,
-    display: 'flex',
-    alignItems: 'left',
-    flexDirection: 'column'
-  },
-  resourceDetailSection: {
-    marginBottom: 20
-  },
-  resourceDetailText: {
-    textAlign: 'left'
-  },
-  banner: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: 80,
-    zIndex: 100
-  },
-  container: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%'
   }
 };
 
 class Canvas extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedResource: null
-    };
+  static propTypes = {
+    resourceGraph: ImmutablePropTypes.listOf(
+      ImmutablePropTypes.listOf(
+        ImmutablePropTypes.mapContains({
+          definition: ImmutablePropTypes.contains({
+            name: PropTypes.string,
+            egress: ImmutablePropTypes.listOf(
+              PropTypes.string
+            )
+          }),
+          display: ImmutablePropTypes.contains({
+            color: PropTypes.string
+          })
+        })
+      )
+    ),
+    onResourceClick: PropTypes.func.isRequired
   }
   
   render() {
-    const connState = this.props.connectionData.get('connectionState');
-    const connErr = this.props.connectionData.get('error');
     return (
-      <div style={styles.container}>
-         {this.renderConnectionBanner(connState, connErr)}
-        <div style={styles.canvas}>
-          {this.state.selectedResource ? this.renderResourceDetail(this.state.selectedResource) : null}
-          {resourceGraph.map((col) => this.renderResourceColumn(col))}
-        </div>
+      <div style={styles.canvas}>
+        {this.props.resourceGraph.map(this.renderResourceColumn)}
       </div>
     );
   }
-
-  renderConnectionBanner = (status, err) => {
-    function configForStatus(status, err) {
-      switch(status) {
-        case 'disconnected':
-          if ( !err ) {
-            return { text: 'Connection disconected. Retrying in ${??}', bg: 'orange' };
-          }
-          return { text: `Error opening connection ${JSON.stringify(err)}`, bg: 'red' };
-        case 'loading':
-          return { text: 'Reconnecting...', bg: 'orange' };
-        case 'open':
-          return { text: 'Connection open!', bg: 'green' };
-        default:
-          return '';
-      }
-    }
-    
-    const config = configForStatus(status, err);
-    return (
-      <div style={{ ...styles.banner, ...{ backgroundColor: config.bg }}}>
-        <p>{config.text}</p>
-      </div>
-    );
-  };
   
   renderResourceColumn = (col) => {
     return (
       <div style={styles.col} key={col.join('')}>
-        {col.map((r) => this.renderResource(r))}
+        {col.map(this.renderResource)}
       </div>
     );
   };
 
   renderResource = (r) => {
-    // look up most recent stat to determine color
-    const resource = this.getResource(r);
-    const displayAttributes = this.getDisplayAttributes(r);
+    const def = r.get('definition');
+    const displayAttributes = this.getDisplayAttributes(r.get('display'));
     const color = displayAttributes.get('color');
     return (
       <div style={{ ...styles.resource, ...{ backgroundColor: color } }}
            key={r}
-           onClick={this.onResourceClick.bind(this, r)}>
-        {resource.get('image')
-         ? ( <img src={resource.getIn([ 'image', 'src' ])} style={styles.resourceImage} /> )
+           onClick={this.props.onResourceClick.bind(this, def.get('name'))}>
+        {def.get('image')
+         ? ( <img src={def.getIn([ 'image', 'src' ])} style={styles.resourceImage} /> )
          : null}
-        <p>{r}</p>
+        <p>{def.get('name')}</p>
       </div>
     );
-  };
-  
-  onResourceClick = (r, e) => {
-    this.setState({
-      selectedResource: this.state.selectedResource === r ? null : r
-    });
-  };
-  
-  renderResourceDetail = (r) => {
-    const resource = this.getResource(r);
-    const severity = this.getSeverity(r) || 'none';
-    const metrics = this.props.resourceData.metricsByResource.get(r).valueSeq();
-    const displayAttributes = this.getDisplayAttributes(r);
-    const color = displayAttributes.get('color');
-    return (
-      <div style={styles.resourceDetail}>
-        <div style={styles.resourceDetailSection}>
-          <p style={styles.resourceDetailText}>{`Resource: ${r}`}</p>
-          <p style={styles.resourceDetailText}>{`Severity: ${severity}`}</p>
-        </div>
-        {metrics
-         ? (
-           <div style={styles.resourceDetailSection}>
-             <p style={styles.resourceDetailText}>{`Offending metrics:`}</p>
-             <div style={styles.statList}>
-               {metrics.map((m) => {
-                 return ( <p style={styles.resourceDetailText}>{`${m.key}: ${m.value}`}</p> );
-               })}
-             </div>
-           </div>
-         ) : null}
-         <div style={styles.resourceDetailSection}>
-           <a>View full resource details</a>
-         </div>
-      </div>
-    );
-  };
-  
-  getResource = (r) => {
-    return resources.get(r);
   };
 
-  getSeverity = (r) => {
-    // TODO: inefficient, find better algo
-    const metrics = this.props.resourceData.metricsByResource.get(r);
-    if ( metrics.size > 0 ) {
-      const topMetric = metrics.maxBy((m) => m.value);
-      return topMetric.getSeverity();
-    }
-  };
-  
-  getDisplayAttributes = (resourceName) => {
+  getDisplayAttributes = (displayAttributes) => {
     const defaultAttributes = Map({ color: 'rgba(255,255,255,0.5)' });
-    const severity = this.getSeverity(resourceName);
-    const displayAttributes = severity 
-          ? global.getIn(['severities', severity, 'display' ])
-          : Map();
     return defaultAttributes.merge(displayAttributes);
   };
 }
 
-export default connect((state) => ({
-  connectionData: state.connectionData,
-  resourceData: state.resourceData
-}))(Canvas);
+export default Canvas;
 
 /*function structureResources(template) {
   // 1. gather non-ingress

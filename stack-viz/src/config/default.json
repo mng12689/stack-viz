@@ -89,39 +89,32 @@
     },
     "admin-web-instance": {
       "type": "svc-instance",
-      "multi": true,
       "egress": [ "account-instance" ],
-      "parent": "admin-web-cluster"
+      "instance_of": "admin-web-cluster"
     },
     "account-cluster": {
       "type": "svc-cluster"
     },
     "account-instance": {
       "type": "svc-instance",
-      "multi": true,
-      "show": false,
       "egress": [ "account-rdbms" ],
-      "parent": "account-cluster"
+      "instance_of": "account-cluster"
     },
     "auth-cluster": {
       "type": "svc-cluster"
     },
     "auth-instance": {
       "type": "svc-instance",
-      "multi": true,
-      "show": false,
       "egress": [ "auth-rdbms" ],
-      "parent": "auth-cluster"
+      "instance_of": "auth-cluster"
     },
     "sponsor-cluster": {
       "type": "svc-cluster"
     },
     "sponsor-instance": {
       "type": "svc-instance",
-      "multi": true,
-      "show": false,
       "egress": [ "sponsor-rdbms" ],
-      "parent": "sponsor-cluster"
+      "instance_of": "sponsor-cluster"
     },
     "account-rdbms": {
       "type": "rdbms"
