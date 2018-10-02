@@ -54,7 +54,7 @@ class Canvas extends Component {
     ),
     onResourceClick: PropTypes.func.isRequired
   }
-  
+
   render() {
     return (
       <div style={styles.canvas}>

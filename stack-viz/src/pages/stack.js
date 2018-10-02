@@ -70,7 +70,7 @@ class Stack extends Component {
     const connState = this.props.connectionData.get('connectionState');
     const connErr = this.props.connectionData.get('error');
     // TODO: highly inefficient to calc graph each render
-    const graph = resourceGraph.map((c) => {x
+    const graph = resourceGraph.map((c) => {
       return c.map((r) => r.set('display', this.getDisplayAttributes(this.getSeverity(r.getIn([ 'definition', 'name' ])))));
     });
                
