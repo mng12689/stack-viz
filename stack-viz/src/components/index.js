@@ -1,4 +1,4 @@
-import Canvas from './canvas-2';
+import Canvas from './canvas';
 
 export {
   Canvas
