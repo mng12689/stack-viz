@@ -82,39 +82,43 @@
     },
     "admin-lb": {
       "type": "lb",
-      "egress": [ "admin-web-instance" ]
+      "egress": [ "admin-web-cluster" ]
     },
     "admin-web-cluster": {
-      "type": "svc-cluster"
+      "type": "svc-cluster",
+      "egress": [ "account-cluster", "auth-cluster", "sponsor-cluster" ]
     },
     "admin-web-instance": {
       "type": "svc-instance",
       "egress": [ "account-instance" ],
-      "instance_of": "admin-web-cluster"
+      "instanceOf": "admin-web-cluster"
     },
     "account-cluster": {
-      "type": "svc-cluster"
+      "type": "svc-cluster",
+      "egress": [ "account-rdbms" ]
     },
     "account-instance": {
       "type": "svc-instance",
       "egress": [ "account-rdbms" ],
-      "instance_of": "account-cluster"
+      "instanceOf": "account-cluster"
     },
     "auth-cluster": {
-      "type": "svc-cluster"
+      "type": "svc-cluster",
+      "egress": [ "account-cluster", "auth-rdbms" ]
     },
     "auth-instance": {
       "type": "svc-instance",
       "egress": [ "auth-rdbms" ],
-      "instance_of": "auth-cluster"
+      "instanceOf": "auth-cluster"
     },
     "sponsor-cluster": {
-      "type": "svc-cluster"
+      "type": "svc-cluster",
+      "egress": [ "sponsor-rdbms" ]
     },
     "sponsor-instance": {
       "type": "svc-instance",
       "egress": [ "sponsor-rdbms" ],
-      "instance_of": "sponsor-cluster"
+      "instanceOf": "sponsor-cluster"
     },
     "account-rdbms": {
       "type": "rdbms"
