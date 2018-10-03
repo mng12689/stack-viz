@@ -7,6 +7,7 @@ services:
       context: ./stack-viz
     volumes:
       - './stack-viz:/app'
+      - './stack-viz/src/config/default.json:/etc/stack-viz.d/default.json'
     ports:
       - '3000:3000'
     environment:

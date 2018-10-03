@@ -64,22 +64,22 @@ class Stack extends Component {
     this.state = {
       selectedResource: null
     };
+    this.resources = this.computeResourceRepresentation(props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.resources = this.computeResourceRepresentation(nextProps);
   }
   
   render() {
     const connState = this.props.connectionData.get('connectionState');
     const connErr = this.props.connectionData.get('error');
-    // TODO: highly inefficient to calc graph each render
-    const graph = resourceGraph.map((c) => {x
-      return c.map((r) => r.set('display', this.getDisplayAttributes(this.getSeverity(r.getIn([ 'definition', 'name' ])))));
-    });
-               
     return (
       <div style={styles.container}>
          {this.renderConnectionBanner(connState, connErr)}
         <div style={styles.canvas}>
           {this.state.selectedResource ? this.renderResourceDetail(this.state.selectedResource) : null}
-        <Canvas resourceGraph={graph}
+        <Canvas resources={this.resources}
                 onResourceClick={this.onResourceClick} />
         </div>
       </div>
@@ -118,7 +118,7 @@ class Stack extends Component {
   };
   
   renderResourceDetail = (rName) => {
-    const severity = this.getSeverity(rName) || 'none';
+    const severity = this.getSeverity(this.props, rName) || 'none';
     const metrics = this.props.resourceData.metricsByResource.get(rName).valueSeq();
     return (
       <div style={styles.resourceDetail}>
@@ -144,9 +144,9 @@ class Stack extends Component {
     );
   };
 
-  getSeverity = (rName) => {
+  getSeverity = (props, rName) => {
     // TODO: inefficient, find better algo
-    const metrics = this.props.resourceData.metricsByResource.get(rName);
+    const metrics = props.resourceData.metricsByResource.get(rName);
     if ( metrics.size > 0 ) {
       const topMetric = metrics.maxBy((m) => m.value);
       return topMetric.getSeverity();
@@ -158,6 +158,16 @@ class Stack extends Component {
           ? global.getIn(['severities', severity, 'display' ])
           : Map();
   };
+
+  computeResourceRepresentation(props) {
+    return resources.entrySeq().reduce((map, [ rName, r ]) => {
+      if ( r.get('instanceOf') ) return map;
+      return map.set(rName, Map({
+        definition: r,
+        display: this.getDisplayAttributes( this.getSeverity(props, rName) )
+      }));
+    }, Map());
+  }
 }
 
 export default connect((state) => ({
