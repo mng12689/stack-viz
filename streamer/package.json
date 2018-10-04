@@ -1,0 +1,14 @@
+{
+  "name": "@click-therapeutics-org/streamer",
+  "version": "0.1.0",
+  "description": "CLI for easy streaming of payloads to a specified destination",
+  "main": "streamer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mng",
+  "license": "ISC",
+  "dependencies": {
+    "yargs": "^12.0.2"
+  }
+}
