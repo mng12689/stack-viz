@@ -26,8 +26,9 @@ const parser = require('yargs').command('stream <host> <port>', 'Stream payloads
       },
       nloops: {
         alias: 'n',
-        describe: 'Number of loops to do over the input source. Works in both interactive and non-interactive modes.',
-        type: 'boolean'
+        describe: 'If in non-interactive mode, the number of loops to do over the input source',
+        type: 'integer',
+        default: 1
       },
       protocol: {
         alias: 'p',
