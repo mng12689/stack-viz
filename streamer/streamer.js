@@ -53,15 +53,25 @@ function readNextIfNecessary(inputSource, client, args) {
   }
 }
 
-function main() {
-  const args = parser.argv;
-  
+function openStream(args, nloops) {
   const client = getClient(args.protocol);
   const inputSource = args.interactive
         ? process.stdin
         : fs.createReadStream(args.file, { encoding: 'utf8', highWaterMark: 1024 });
   inputSource.on('readable', readNextIfNecessary.bind(null, inputSource, client, args));
-  inputSource.on('close', () => clearTimeout(timerId));
+  inputSource.on('close', () => {
+    clearTimeout(timerId);
+    timerId = null;
+    console.log(nloops, args.nloops);
+    if ( nloops < args.nloops) {
+      openStream(args, nloops+1);
+    }
+  });
+}
+
+function main() {
+  const args = parser.argv;
+  openStream(args, 1);
 }
 
 main();
