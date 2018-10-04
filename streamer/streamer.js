@@ -41,7 +41,7 @@ function readNext(inputSource, client, args) {
   }
 
   if ( !args.interactive ) {
-    timerId = setTimeout(readNext.bind(null,inputSource, client, args), 1000 * args.speed);
+    timerId = setTimeout(readNext.bind(null,inputSource, client, args), 1000 / args.speed);
   }
 };
 

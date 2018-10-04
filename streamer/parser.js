@@ -20,7 +20,7 @@ const parser = require('yargs').command('stream <host> <port>', 'Stream payloads
       },
       speed: {
         alias: 's',
-        describe: 'If in non-interactive mode, the frequency (in paylaods per sec) at which the supplied payloads are streamed to the destination',
+        describe: 'If in non-interactive mode, the rate (in payloads per sec) at which the supplied payloads are streamed to the destination',
         type: 'number',
         default: 1
       },
