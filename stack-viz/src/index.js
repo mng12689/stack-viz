@@ -3,7 +3,6 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { store } from './lib';
 import init from './init';
-import reducers from './reducers';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 

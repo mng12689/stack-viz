@@ -18,20 +18,21 @@ function readNext(inputSource, client, args) {
   // parse next line and put remaining chars back into the buffer
   console.log('read: ', buf);
   if (buf) {
+    let msg = buf;
     var offset = 0;
     for (; offset < buf.length; offset++) {
       if (buf[offset] === '\x0A' || buf[offset] === 'x0D') {
-        const msg = buf.slice(0, offset + 1);
-        client.send(msg, args.port, args.host, (err) => {
-          if ( err ) {
-            console.warn('Message transmission error: ', err);
-          }
-        });
+        msg = buf.slice(0, offset + 1);
         buf = buf.slice(offset + 1);
         inputSource.unshift(buf);
         break;
       }
     }
+    client.send(msg, args.port, args.host, (err) => {
+      if ( err ) {
+        console.warn('Message transmission error: ', err);
+      }
+    });
   }
 
   // stdin seems to get paused during the readable callback?

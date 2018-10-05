@@ -1,5 +1,4 @@
-import { Record, fromJS, Map } from 'immutable';
-import { Resource } from '../models';
+import { Record, Map } from 'immutable';
 import { actions } from '../constants';
 import { resources } from '../config';
 

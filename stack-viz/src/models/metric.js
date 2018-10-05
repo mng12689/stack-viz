@@ -1,4 +1,4 @@
-import { Record, Map } from 'immutable';
+import { Record } from 'immutable';
 import { global, resources } from '../config';
 
 class Metric extends Record({

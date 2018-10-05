@@ -1,6 +1,5 @@
 import Graph from 'react-graph-vis';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { lightenDarkenHexColor } from '../lib';
 import cs from 'color-string';
