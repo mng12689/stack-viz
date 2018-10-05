@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { Map, fromJS } from 'immutable';
 
 // Load resources, expose static rsource config here...

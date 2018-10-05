@@ -1,20 +1,8 @@
 import React, { Component } from 'react';
-import { fromJS, Map, List } from 'immutable';
+import { Map } from 'immutable';
 import { connect } from 'react-redux';
-import { websocket } from '../actions';
 import { resources, global } from '../config';
 import { Canvas } from '../components';
-
-// TODO: automate the creation of this resource graph
-const resourceGraph = List([
-  List([ 'admin-web-client' ]),
-  List([ 'admin-lb']),
-  List([ 'admin-web-cluster' ]),
-  List([ 'account-cluster', 'auth-cluster', 'sponsor-cluster' ]),
-  List([ 'account-rdbms', 'auth-rdbms', 'sponsor-rdbms' ])
-]).map((c) => {
-  return c.map((r) => Map({ definition: resources.get(r).set('name', r) }));
-});
 
 const styles = {
   container: {
@@ -91,7 +79,7 @@ class Stack extends Component {
       switch(status) {
         case 'disconnected':
           if ( !err ) {
-            return { text: 'Connection disconected. Retrying in ${??}', bg: 'orange' };
+            return { text: 'Connection disconected. Retrying in (unimplemented)', bg: 'orange' };
           }
           return { text: `Error opening connection ${JSON.stringify(err)}`, bg: 'red' };
         case 'loading':

@@ -1,6 +1,5 @@
 import { actions } from '../constants';
 import { Metric } from '../models';
-import appConfig from '../config';
 
 function openingConnection() {
   return {
