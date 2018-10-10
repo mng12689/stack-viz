@@ -1,20 +1,4 @@
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
-{ key: x, value: 100, rname: abc, rinst: 123 }
+{"key":"latency_per_req","value": 100,"rName":"account-cluster"}
+{"key":"latency_per_req","value": 600,"rName":"account-cluster"}
+{"key":"latency_per_req","value": 2100,"rName":"account-cluster"}
+
