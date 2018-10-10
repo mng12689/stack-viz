@@ -16,7 +16,6 @@ function getClient(p) {
 function readNext(inputSource, client, args) {
   var buf = inputSource.read();
   // parse next line and put remaining chars back into the buffer
-  console.log('read: ', buf);
   if (buf) {
     let msg = buf;
     var offset = 0;
@@ -28,6 +27,7 @@ function readNext(inputSource, client, args) {
         break;
       }
     }
+    console.log('sending: ',  msg);
     client.send(msg, args.port, args.host, (err) => {
       if ( err ) {
         console.warn('Message transmission error: ', err);
