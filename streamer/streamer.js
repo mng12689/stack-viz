@@ -23,7 +23,13 @@ function readNext(inputSource, client, args) {
       if (buf[offset] === '\x0A' || buf[offset] === 'x0D') {
         msg = buf.slice(0, offset + 1);
         buf = buf.slice(offset + 1);
+
+        // remove the readable listener before unshifting into the buffer to avoid an immediate callback before processing is complete
+        const tmp = inputSource.listeners('readable');
+        inputSource.removeAllListeners('readable', tmp);
         inputSource.unshift(buf);
+        inputSource.addListener('readable',tmp[0]);
+        
         break;
       }
     }
